@@ -1,0 +1,63 @@
+// ==UserScript==
+// @name         在速买通后台直接通过WhatsApp联系客户
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        https://csp.aliexpress.com/*
+// @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
+// @grant        none
+// @run-at       document-end
+// ==/UserScript==
+
+(function() {
+  // 定义一个函数来检查元素是否存在
+  function checkForPhoneNumber() {
+    const phoneNumberElement = document.querySelector('[id^="DadaMicroLoaderMicroLoader_"] > div > div > div > div > div.dada-main-page > div.ui-item.label-hoc.parent-Order.Detail.clazzName-undefined.CommonContainer.CommonContainer.container.hoc-label-top.isContainer.empty-label > div > div > div > div > div:nth-child(3) > div > div:nth-child(2) > div > div > div:nth-child(4) > div > div > span');
+    if (phoneNumberElement) {
+      // 从电话号码元素中提取电话号码，并删除所有空格、括号和破折号
+      const phoneNumber = phoneNumberElement.textContent.trim().replace(/[^\d]/g, '');
+
+      console.log('提取的电话号码:', phoneNumber); // 输出提取的电话号码
+
+      // 创建 WhatsApp 按钮元素
+      const whatsappButton = document.createElement('a');
+
+      // 设置 WhatsApp 按钮的属性
+      whatsappButton.href = `https://web.whatsapp.com/send?phone=${phoneNumber}`;
+      whatsappButton.target = '_blank';
+      whatsappButton.innerHTML = '<i class="fab fa-whatsapp"></i>';
+
+      // 查找创建 WhatsApp 按钮的位置
+      const buttonParent = document.querySelector('.order-detail-delivery-address.reload-none.flex-layout.flex-layout_direction_column');
+      if (buttonParent) {
+        // 将 WhatsApp 按钮添加到指定位置
+        buttonParent.appendChild(whatsappButton);
+
+        console.log('WhatsApp 按钮添加成功'); // 输出按钮添加成功的消息
+
+        // 添加 WhatsApp 按钮的样式
+whatsappButton.style.textDecoration = "none";
+whatsappButton.style.lineHeight = "30px";
+whatsappButton.style.display = "inline-block";
+whatsappButton.style.textAlign = "center";
+whatsappButton.style.borderRadius = "6px";
+whatsappButton.style.backgroundColor = "rgb(70, 188, 21)";
+whatsappButton.style.borderColor = "rgb(70, 188, 21)";
+whatsappButton.style.color = "rgb(246, 248, 250)";
+whatsappButton.style.marginTop = '10px';
+      whatsappButton.innerText = '通过WhatsApp联系客户';
+
+
+        clearInterval(intervalId); // 找到元素后清除定时器
+      } else {
+        console.log('WhatsApp 按钮添加失败：找不到父元素'); // 输出按钮添加失败的消息
+      }
+    } else {
+      console.log('未找到电话号码元素'); // 输出未找到电话号码的消息
+    }
+  }
+
+  // 每隔 1 秒钟检查一次元素是否存在
+  const intervalId = setInterval(checkForPhoneNumber, 1000);
+})();
